@@ -6,21 +6,24 @@ import platform
 import warnings
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
-import pyemu
-import flopy
+
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt;
 import psutil
-sys.path.append("..")
-import herebedragons as hbd
+sys.path.insert(0,"..")
+import herebedragons as hbd               
+sys.path.insert(0,os.path.join("..","..","dependencies"))                               
+import pyemu
+import flopy
 
 
 def setup_pst():
 
 
     # folder containing original model files
-    org_d = os.path.join('..','..', 'models', 'daily_model_files_mp_org')
+    org_d = os.path.join('..','..', 'models', 'daily_model_files_newstress')
 
     # a dir to hold a copy of the org model files
     tmp_d = os.path.join('daily_freyberg_mf6')
@@ -411,13 +414,6 @@ def setup_pst():
                                 use_cols=list(df.columns.values), #names of columns that include observation values; can also use column number (zero-based) instead of the header name
                                 prefix="hdstd") #prefix to all observation names
 
-    df = pd.read_csv(os.path.join(template_ws, "heads.vdiff.csv"), index_col=0)
-    _ = pf.add_observations("heads.vdiff.csv", # the model output file to read
-                                insfile="heads.vdiff.csv.ins", #optional, the instruction file name
-                                index_cols="time", #column header to use as index; can also use column number (zero-based) instead of the header name
-                                use_cols=list(df.columns.values), #names of columns that include observation values; can also use column number (zero-based) instead of the header name
-                                prefix="hdsvd") #prefix to all observation names
-
 
 
     pst = pf.build_pst()
@@ -519,8 +515,10 @@ def pick_truth(m_d,t_d):
     hw_fore = hw_fore[0]
     #use the worst hw value
     hw_vals = oe.loc[:,hw_fore].values.copy()
-    mx = hw_vals.max()
-    amx = np.argmax(hw_vals)
+    #mx = hw_vals.max()
+    #amx = np.argmax(hw_vals)
+    amx = int(hw_vals.shape[0]/2)
+    mx = hw_vals[amx]
     print(hw_vals)
     print(mx,amx)
     ovals = oe._df.iloc[amx,:]
@@ -582,13 +580,19 @@ def store_truth_model(truth_d):
     tmp_d = os.path.join('..','..', 'models', 'daily_freyberg_mf6_truth')
     if os.path.exists(tmp_d):
         shutil.rmtree(tmp_d)
-    shutil.copytree(org_d,tmp_d)
+    #shutil.copytree(org_d,tmp_d)
+    os.makedirs(tmp_d)
+    pst = pyemu.Pst(os.path.join(truth_d,"truth.pst"))
+    pst.write(os.path.join(tmp_d,"truth.pst"),version=2)
+    shutil.copy2(os.path.join(truth_d,"obs_data.csv"),os.path.join(tmp_d,"obs_data.csv"))
+    shutil.copy2(os.path.join(truth_d,"pred_data.csv"),os.path.join(tmp_d,"pred_data.csv"))
+
 
 
 if __name__ == "__main__":
-    setup_pst()
-    run_prior_mc("freyberg6_template")
-    pick_truth("master_pmc","freyberg6_template")
-    prep_obs_data("truth_template")
+    #setup_pst()
+    #run_prior_mc("freyberg6_template")
+    #pick_truth("master_pmc","freyberg6_template")
+    #prep_obs_data("truth_template")
     store_truth_model("truth_template")
     
