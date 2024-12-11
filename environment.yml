@@ -4,13 +4,8 @@ channels:
 dependencies:
   - python=3.11
   - pip
-<<<<<<< HEAD
   - pandas
   - numpy
-=======
-  - pandas>=2.0
-  - numpy<2 
->>>>>>> fd7bb2b8a85b42aa4df86034c3bc3c3b064d3a21
   - matplotlib 
   - openpyxl
   - xlrd
