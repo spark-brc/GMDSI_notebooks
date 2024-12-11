@@ -2,11 +2,18 @@ name: gmdsitut
 channels:
   - conda-forge
 dependencies:
-  - python=3.10
+  - python=3.11
   - pip
+<<<<<<< HEAD
   - pandas
   - numpy
+=======
+  - pandas>=2.0
+  - numpy<2 
+>>>>>>> fd7bb2b8a85b42aa4df86034c3bc3c3b064d3a21
   - matplotlib 
+  - openpyxl
+  - xlrd
   - jupyter 
   - notebook 
   - scipy 
@@ -20,9 +27,5 @@ dependencies:
   - pip:
        - -e ./dependencies/flopy
        - -e ./dependencies/pyemu
-       # - flopy
-       # - git+https://github.com/modflowpy/flopy.git
-       # - pyemu
-       # - git+https://github.com/pypest/pyemu.git@develop
 
 
